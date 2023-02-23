@@ -166,8 +166,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void onStatusPosted(String post) {
-        postingToast = Toast.makeText(this, "Posting Status...", Toast.LENGTH_LONG);
-        postingToast.show();
+
 
         try {
             Status newStatus = new Status(post, Cache.getInstance().getCurrUser(), System.currentTimeMillis(), parseURLs(post), parseMentions(post));
@@ -287,6 +286,12 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     }
 
     @Override
+    public void displayInfoMessage(String s) {
+        postingToast = Toast.makeText(this, s, Toast.LENGTH_LONG);
+        postingToast.show();
+    }
+
+    @Override
     public void updateFollow(boolean b) {
         updateSelectedUserFollowingAndFollowers();
         updateFollowButton(b);
@@ -301,12 +306,6 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     public void logout() {
         logOutToast.cancel();
         logoutUser();
-    }
-
-    @Override
-    public void post() {
-        postingToast.cancel();
-        Toast.makeText(MainActivity.this, "Successfully Posted!", Toast.LENGTH_LONG).show();
     }
 
     @Override

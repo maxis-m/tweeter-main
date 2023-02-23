@@ -24,14 +24,13 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
         void setNoFollow();
 
         void displayErrorMessage(String s);
+        void displayInfoMessage(String s);
 
         void updateFollow(boolean b);
 
         void followButton(boolean b);
 
         void logout();
-
-        void post();
 
         void getFollowerCount(Bundle data);
 
@@ -62,9 +61,14 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
     public void logout() {
         userService.logout(new LogoutObserver());
     }
+
+
     public void postStatus(Status newStatus) {
+        view.displayInfoMessage("Posting Status...");
         getUserService().postStatus(newStatus, new PostStatusObserver());
     }
+
+
     public void getFollowerCount(User selectedUser) {
         getUserService().getFollowerCount(selectedUser, new GetFollowersCountObserver());
     }
@@ -74,12 +78,12 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
     private abstract class MainObserver implements ServiceObserver{
         @Override
         public void handleFailure(String message) {
-            view.displayErrorMessage(getMessage() + message);
+            view.displayErrorMessage(getMessage() + ": " + message);
         }
 
         @Override
         public void handleException(Exception ex) {
-            view.displayErrorMessage(getMessage() + getMessage());
+            view.displayErrorMessage(getMessage() + " because of exception: " + ex.getMessage());
         }
         public abstract String getMessage();
     }
@@ -92,7 +96,7 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
 
         @Override
         public String getMessage() {
-            return "Failed to get Following Count: ";
+            return "Failed to get Following Count";
         }
     }
     private class GetFollowersCountObserver extends MainObserver implements UserService.GetFollowersCountObserver{
@@ -104,19 +108,19 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
 
         @Override
         public String getMessage() {
-            return "Failed to get Follower Count: ";
+            return "Failed to get Follower Count";
         }
     }
     private class PostStatusObserver extends MainObserver implements UserService.PostStatusObserver{
 
         @Override
         public void post() {
-            view.post();
+            view.displayInfoMessage("Successfully Posted!");
         }
 
         @Override
         public String getMessage() {
-            return "Failed to post status: ";
+            return "Failed to post status";
         }
     }
     private class UnFollowerObserver extends MainObserver implements UserService.UnFollowerObserver{
@@ -128,7 +132,7 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
         }
         @Override
         public String getMessage() {
-            return "Failed to unfollow: ";
+            return "Failed to unfollow";
         }
 
     }
@@ -141,7 +145,7 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
         }
         @Override
         public String getMessage() {
-            return "Failed to follow: ";
+            return "Failed to follow";
         }
     }
     private class LogoutObserver extends MainObserver implements UserService.LogoutObserver{
@@ -153,7 +157,7 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
 
         @Override
         public String getMessage() {
-            return "Failed to logout: ";
+            return "Failed to logout";
         }
     }
     private class IsFollowerObserver extends MainObserver implements UserService.IsFollowingObserver{
@@ -171,7 +175,7 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
         }
         @Override
         public String getMessage() {
-            return "Failed to determine following relationship: ";
+            return "Failed to determine following relationship";
         }
     }
 }
