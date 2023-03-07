@@ -10,7 +10,7 @@ import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.service.observer.ServiceObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class FollowService extends Service{
+public class FollowService {
 
 
     //public interface Observer<T> extends ServiceObserver {

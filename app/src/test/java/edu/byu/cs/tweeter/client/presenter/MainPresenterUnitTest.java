@@ -1,6 +1,8 @@
 package edu.byu.cs.tweeter.client.presenter;
 
 
+import static org.mockito.Mockito.doAnswer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -65,7 +67,7 @@ public class MainPresenterUnitTest {
                 return null;
             }
         };
-        Mockito.doAnswer(answer).when(mockUserService).postStatus(Mockito.any(), Mockito.any());
+        doAnswer(answer).when(mockUserService).postStatus(Mockito.any(), Mockito.any());
         mainPresenterSpy.postStatus(mockStatus);
         Mockito.verify(mockView).displayInfoMessage("Posting Status...");
         Mockito.verify(mockView).displayInfoMessage("Successfully Posted!");
@@ -81,7 +83,7 @@ public class MainPresenterUnitTest {
                 return null;
             }
         };
-        Mockito.doAnswer(answer).when(mockUserService).postStatus(Mockito.any(), Mockito.any());
+        doAnswer(answer).when(mockUserService).postStatus(Mockito.any(), Mockito.any());
         mainPresenterSpy.postStatus(mockStatus);
         Mockito.verify(mockView).displayInfoMessage("Posting Status...");
         Mockito.verify(mockView).displayErrorMessage("Failed to post status: <ERROR MESSAGE>");
@@ -97,9 +99,39 @@ public class MainPresenterUnitTest {
                 return null;
             }
         };
-        Mockito.doAnswer(answer).when(mockUserService).postStatus(Mockito.any(), Mockito.any());
+        doAnswer(answer).when(mockUserService).postStatus(Mockito.any(), Mockito.any());
         mainPresenterSpy.postStatus(mockStatus);
         Mockito.verify(mockView).displayInfoMessage("Posting Status...");
         Mockito.verify(mockView).displayErrorMessage("Failed to post status because of exception: <EXCEPTION MESSAGE>");
+    }
+    @Test
+    public void testPostStatus_correctParams() {
+        doAnswer(new Answer() {
+            public Object answer(InvocationOnMock invocation) {
+                UserService.PostStatusObserver observer = invocation.getArgument(1, UserService.PostStatusObserver.class);
+                Status status = invocation.getArgument(0, Status.class);
+
+                if (observer != null && status != null) {
+                    return true;
+                }
+                return false;
+            }})
+                .when(mockUserService).postStatus(Mockito.any(), Mockito.any());
+        mainPresenterSpy.postStatus(mockStatus);
+    }
+    @Test
+    public void testPostStatus_incorrectParams() {
+        doAnswer(new Answer() {
+            public Object answer(InvocationOnMock invocation) {
+                UserService.PostStatusObserver observer = invocation.getArgument(1, UserService.PostStatusObserver.class);
+                Status status = invocation.getArgument(0, Status.class);
+
+                if (observer == null && status == null) {
+                    return true;
+                }
+                return false;
+            }})
+                .when(mockUserService).postStatus(null, null);
+        mainPresenterSpy.postStatus(mockStatus);
     }
 }
