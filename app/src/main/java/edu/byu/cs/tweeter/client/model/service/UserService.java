@@ -39,6 +39,7 @@ import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class UserService{
+    public static final String URL_PATH_LOGIN = "/login";
 
     public void login(String username, String password, LoginObserver observer){
         // Send the login request.

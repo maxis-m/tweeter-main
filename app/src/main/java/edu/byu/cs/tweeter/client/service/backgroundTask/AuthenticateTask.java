@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.client.model.net.ServerFacade;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.util.Pair;
@@ -16,7 +17,7 @@ public abstract class AuthenticateTask extends BackgroundTask {
 
     private User authenticatedUser;
 
-    private AuthToken authToken;
+    protected AuthToken authToken;
 
     /**
      * The user's username (or "alias" or "handle"). E.g., "@susan".
@@ -27,6 +28,7 @@ public abstract class AuthenticateTask extends BackgroundTask {
      * The user's password.
      */
     protected final String password;
+    protected ServerFacade serverFacade;
 
     protected AuthenticateTask(Handler messageHandler, String username, String password) {
         super(messageHandler);

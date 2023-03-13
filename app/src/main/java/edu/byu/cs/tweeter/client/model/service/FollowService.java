@@ -11,7 +11,8 @@ import edu.byu.cs.tweeter.client.service.observer.ServiceObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService {
-
+    public static final String URL_PATH_GET_FOLLOWING = "/getfollowing";
+    public static final String URL_PATH_GET_FOLLOWERS = "/getfollowers";
 
     //public interface Observer<T> extends ServiceObserver {
 

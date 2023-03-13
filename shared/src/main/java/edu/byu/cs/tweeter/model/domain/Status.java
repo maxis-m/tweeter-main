@@ -22,7 +22,7 @@ public class Status implements Serializable {
     /**
      * String representation of the date/time at which the status was sent.
      */
-    public long timestamp;
+    public Long timestamp;
     /**
      * URLs contained in the post text.
      */
@@ -35,7 +35,7 @@ public class Status implements Serializable {
     public Status() {
     }
 
-    public Status(String post, User user, long timestamp, List<String> urls, List<String> mentions) {
+    public Status(String post, User user, Long timestamp, List<String> urls, List<String> mentions) {
         this.post = post;
         this.user = user;
         this.timestamp = timestamp;
@@ -51,11 +51,11 @@ public class Status implements Serializable {
         return user;
     }
 
-    public long getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public String getFormattedDate() {
+    public String getFormattedDate(){
         return new SimpleDateFormat("E MMM d k:mm:ss z y", Locale.US).format(new Date(timestamp));
     }
     public String getPost() {
