@@ -22,7 +22,7 @@ public class GetFollowerPresenter extends PagedUserPresenter{
 
     @Override
     protected void getItems(AuthToken authToken, User targetUser, int pageSize, User lastItem) {
-        followService.loadMoreItems(targetUser, pageSize, lastItem, new PagedObserver());
+        followService.loadMoreItems(targetUser, pageSize, lastItem, new PagedObserver(), true);
     }
 
 }
