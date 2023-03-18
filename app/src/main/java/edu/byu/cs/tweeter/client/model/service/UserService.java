@@ -44,6 +44,7 @@ public class UserService{
     public static final String URL_PATH_LOGOUT = "/logout";
     public static final String URL_PATH_FOLLOW = "/follow";
     public static final String URL_PATH_UNFOLLOW = "/unfollow";
+    public static final String URL_PATH_GETUSER = "/getuser";
 
     public void login(String username, String password, LoginObserver observer){
         // Send the login request.

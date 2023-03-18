@@ -15,6 +15,10 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class FollowService {
     public static final String URL_PATH_GET_FOLLOWING = "/getfollowing";
     public static final String URL_PATH_GET_FOLLOWERS = "/getfollowers";
+    public static final String URL_PATH_GET_FOLLOWERS_COUNT = "/getfollowerscount";
+    public static final String URL_PATH_GET_FOLLOWING_COUNT = "/getfollowingcount";
+    public static final String URL_PATH_IS_FOLLOWER = "/isfollower";
+
 
     //public interface Observer<T> extends ServiceObserver {
 

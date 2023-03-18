@@ -2,12 +2,19 @@ package edu.byu.cs.tweeter.server.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.request.GetFollowersCountRequest;
+import edu.byu.cs.tweeter.model.net.request.GetFollowingCountRequest;
+import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.GetFollowersCountResponse;
+import edu.byu.cs.tweeter.model.net.response.GetFollowingCountResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.util.FakeData;
 
 /**
@@ -86,7 +93,19 @@ public class FollowDAO {
 
         return new FollowersResponse(responseFollowers, hasMorePages);
     }
-
+    public GetFollowersCountResponse getFollowersCount(GetFollowersCountRequest request){
+        assert request.getTargetUser() != null;
+        return new GetFollowersCountResponse(20);
+    }
+    public GetFollowingCountResponse getFollowingCount(GetFollowingCountRequest request){
+        assert request.getTargetUser() != null;
+        return new GetFollowingCountResponse(20);
+    }
+    public IsFollowerResponse isFollower(IsFollowerRequest request) {
+        assert request.getFollower() != null;
+        assert request.getFollowee() != null;
+        return new IsFollowerResponse(new Random().nextInt() > 0);
+    }
     /**
      * Determines the index for the first followee in the specified 'allFollowees' list that should
      * be returned in the current request. This will be the index of the next followee after the
@@ -131,11 +150,11 @@ public class FollowDAO {
 
         int followersIndex = 0;
 
-        if(lastFollowerAlias != null) {
+        if (lastFollowerAlias != null) {
             // This is a paged request for something after the first page. Find the first item
             // we should return
             for (int i = 0; i < allFollowers.size(); i++) {
-                if(lastFollowerAlias.equals(allFollowers.get(i).getAlias())) {
+                if (lastFollowerAlias.equals(allFollowers.get(i).getAlias())) {
                     // We found the index of the last item returned last time. Increment to get
                     // to the first one we should return
                     followersIndex = i + 1;
@@ -175,4 +194,6 @@ public class FollowDAO {
     FakeData getFakeData() {
         return FakeData.getInstance();
     }
+
+
 }

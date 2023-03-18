@@ -11,6 +11,10 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class StatusService {
 
+    public static final String URL_PATH_GET_FEED = "/getfeed";
+    public static final String URL_PATH_GET_STORY = "/getstory";
+    public static final String URL_PATH_POST_STATUS = "/poststatus";
+
     public void loadMoreItems(User user, int pageSize, Status lastStatus, PagedPresenter.PagedObserver observer) {
         GetFeedTask getFeedTask = new GetFeedTask(Cache.getInstance().getCurrUserAuthToken(),
                 user, pageSize, lastStatus, new GetFeedHandler(observer));

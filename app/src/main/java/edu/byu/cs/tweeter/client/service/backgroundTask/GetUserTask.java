@@ -2,9 +2,15 @@ package edu.byu.cs.tweeter.client.service.backgroundTask;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
+import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.request.GetUserRequest;
+import edu.byu.cs.tweeter.model.net.request.LogoutRequest;
+import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
+import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
 
 /**
  * Background task that returns the profile for a specified user.
@@ -12,6 +18,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class GetUserTask extends AuthenticatedTask {
 
     public static final String USER_KEY = "user";
+    private static final String LOG_TAG = "get user task";
 
     /**
      * Alias (or handle) for user whose profile is being retrieved.
@@ -27,7 +34,21 @@ public class GetUserTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
-        user = getUser();
+
+        try {
+            GetUserRequest request = new GetUserRequest(alias, authToken);
+            GetUserResponse response = getServerFacade().getUser(request, UserService.URL_PATH_GETUSER);
+            if (!response.isSuccess()) {
+                sendFailedMessage(response.getMessage());
+            }
+            else{
+                user = response.getUser();
+            }
+        }
+        catch (Exception ex) {
+            Log.e(LOG_TAG, ex.getMessage(), ex);
+            sendExceptionMessage(ex);
+        }
 
         // Call sendSuccessMessage if successful
         sendSuccessMessage();
