@@ -25,11 +25,6 @@ public class StoryTest {
 
     @BeforeEach
     public void setup() {
-        /**String username = "@test";
-        String password = "password";
-        String firstName = "FirstName";
-        String lastName = "LastName";
-        String image = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";*/
         User user = new User("FirstName", "LastName",
                 "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
         AuthToken authToken = new AuthToken();
