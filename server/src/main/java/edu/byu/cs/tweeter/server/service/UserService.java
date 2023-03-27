@@ -11,6 +11,7 @@ import edu.byu.cs.tweeter.model.net.response.LoginResponse;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
 import edu.byu.cs.tweeter.server.dao.UserDAO;
+import edu.byu.cs.tweeter.server.dao.UserDynamo;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public class UserService {
@@ -18,7 +19,7 @@ public class UserService {
         if(request.getAlias() == null){
             throw new RuntimeException("[Bad Request] Missing a username");
         }
-        UserDAO userDAO = new UserDAO();
+        UserDAO userDAO = new UserDynamo();
         return userDAO.getUser(request);
     }
 
@@ -88,7 +89,7 @@ public class UserService {
 
         return getUserDAO().register(request);
     }
-    UserDAO getUserDAO(){
-        return new UserDAO();
+    UserDynamo getUserDAO(){
+        return new UserDynamo();
     }
 }

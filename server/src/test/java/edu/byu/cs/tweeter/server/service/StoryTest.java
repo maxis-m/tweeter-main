@@ -13,14 +13,14 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
-import edu.byu.cs.tweeter.server.dao.FollowDAO;
-import edu.byu.cs.tweeter.server.dao.StatusDAO;
+import edu.byu.cs.tweeter.server.dao.FollowDynamo;
+import edu.byu.cs.tweeter.server.dao.StatusDynamo;
 
 public class StoryTest {
 
     private StoryRequest request;
     private StoryResponse expectedResponse;
-    private StatusDAO mockStatusDAO;
+    private StatusDynamo mockStatusDAO;
     private StatusService statusServiceSpy;
 
     @BeforeEach
@@ -36,7 +36,7 @@ public class StoryTest {
 
         // Setup a mock FollowDAO that will return known responses
         expectedResponse = new StoryResponse(Arrays.asList(resultStatus1, resultStatus2), false);
-        mockStatusDAO = Mockito.mock(StatusDAO.class);
+        mockStatusDAO = Mockito.mock(StatusDynamo.class);
         Mockito.when(mockStatusDAO.getStory(request)).thenReturn(expectedResponse);
 
         statusServiceSpy = Mockito.spy(StatusService.class);
@@ -45,7 +45,7 @@ public class StoryTest {
 
     /**
      * Verify that the {@link FollowService#getFollowees(FollowingRequest)}
-     * method returns the same result as the {@link FollowDAO} class.
+     * method returns the same result as the {@link FollowDynamo} class.
      */
     @Test
     public void testStory_validRequest_correctResponse() {

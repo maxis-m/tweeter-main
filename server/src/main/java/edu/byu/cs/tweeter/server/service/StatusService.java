@@ -6,7 +6,7 @@ import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
-import edu.byu.cs.tweeter.server.dao.StatusDAO;
+import edu.byu.cs.tweeter.server.dao.StatusDynamo;
 
 public class StatusService {
     public FeedResponse getFeed(FeedRequest request) {
@@ -33,13 +33,13 @@ public class StatusService {
     }
 
     /**
-     * Returns an instance of {@link StatusDAO}. Allows mocking of the FollowDAO class
+     * Returns an instance of {@link StatusDynamo}. Allows mocking of the FollowDAO class
      * for testing purposes. All usages of FollowDAO should get their FollowDAO
      * instance from this method to allow for mocking of the instance.
      *
      * @return the instance.
      */
-    StatusDAO getStatusDAO() {
-        return new StatusDAO();
+    StatusDynamo getStatusDAO() {
+        return new StatusDynamo();
     }
 }
