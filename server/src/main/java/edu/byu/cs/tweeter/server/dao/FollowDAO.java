@@ -1,16 +1,20 @@
 package edu.byu.cs.tweeter.server.dao;
 
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.request.FollowRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.GetFollowersCountRequest;
 import edu.byu.cs.tweeter.model.net.request.GetFollowingCountRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
+import edu.byu.cs.tweeter.model.net.request.UnfollowRequest;
+import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.net.response.GetFollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.GetFollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
 
 
 /**
@@ -38,9 +42,12 @@ public interface FollowDAO {
      */
     public FollowingResponse getFollowees(FollowingRequest request);
     public FollowersResponse getFollowers(FollowersRequest request);
-    public GetFollowersCountResponse getFollowersCount(GetFollowersCountRequest request);
-    public GetFollowingCountResponse getFollowingCount(GetFollowingCountRequest request);
+
+    FollowersResponse getAllFollowers(FollowersRequest request);
+
     public IsFollowerResponse isFollower(IsFollowerRequest request);
+    public FollowResponse recordFollows(FollowRequest request);
+    public UnfollowResponse deleteFollows(UnfollowRequest request);
 
 
 }

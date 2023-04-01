@@ -12,6 +12,7 @@ import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 public class FollowingResponse extends PagedResponse {
 
     private List<User> followees;
+    private List<String> followeesAlias;
 
     /**
      * Creates a response indicating that the corresponding request was unsuccessful. Sets the
@@ -33,6 +34,10 @@ public class FollowingResponse extends PagedResponse {
         super(true, hasMorePages);
         this.followees = followees;
     }
+    public FollowingResponse(boolean hasMorePages, List<String> followeesAlias) {
+        super(true, hasMorePages);
+        this.followeesAlias = followeesAlias;
+    }
 
     /**
      * Returns the followees for the corresponding request.
@@ -41,6 +46,9 @@ public class FollowingResponse extends PagedResponse {
      */
     public List<User> getFollowees() {
         return followees;
+    }
+    public List<String> getFolloweesAlias(){
+        return followeesAlias;
     }
 
     @Override

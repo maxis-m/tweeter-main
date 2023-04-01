@@ -20,7 +20,7 @@ public interface StatusDAO {
 
     public FeedResponse getFeed(FeedRequest request);
     public StoryResponse getStory(StoryRequest request);
-    public PostStatusResponse postStatus(PostStatusRequest request);
 
 
+    PostStatusResponse postStatus(PostStatusRequest request, List<String> followers);
 }

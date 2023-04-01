@@ -44,8 +44,9 @@ public class GetFeedTask extends PagedStatusTask {
             if (!response.isSuccess()) {
                 sendFailedMessage(response.getMessage());
             }
-            return new Pair<>(response.getFeed(), response.getHasMorePages());
-            //sendSuccessMessage();
+            else{
+                return new Pair<>(response.getFeed(), response.getHasMorePages());
+            }
         } catch (IOException | TweeterRemoteException ex) {
             Log.e(LOG_TAG, "Failed to get followees", ex);
             sendExceptionMessage(ex);

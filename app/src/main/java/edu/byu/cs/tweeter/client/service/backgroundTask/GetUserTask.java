@@ -43,25 +43,17 @@ public class GetUserTask extends AuthenticatedTask {
             }
             else{
                 user = response.getUser();
+                sendSuccessMessage();
             }
         }
         catch (Exception ex) {
             Log.e(LOG_TAG, ex.getMessage(), ex);
             sendExceptionMessage(ex);
         }
-
-        // Call sendSuccessMessage if successful
-        sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 
     @Override
     protected void loadSuccessBundle(Bundle msgBundle) {
         msgBundle.putSerializable(USER_KEY, user);
-    }
-
-    private User getUser() {
-        return getFakeData().findUserByAlias(alias);
     }
 }

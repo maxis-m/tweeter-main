@@ -43,9 +43,6 @@ public class RegisterTask extends AuthenticateTask {
 
     @Override
     protected Pair<User, AuthToken> runAuthenticationTask() {
-        //User registeredUser = getFakeData().getFirstUser();
-        //AuthToken authToken = getFakeData().getAuthToken();
-        //return new Pair<>(registeredUser, authToken);
 
         try {
             RegisterRequest request = new RegisterRequest(username, password, firstName, lastName, image);
@@ -53,7 +50,10 @@ public class RegisterTask extends AuthenticateTask {
             if (!response.isSuccess()) {
                 sendFailedMessage(response.getMessage());
             }
-            return new Pair<>(response.getUser(), response.getAuthToken());
+            else{
+                return new Pair<>(response.getUser(), response.getAuthToken());
+            }
+
         }
         catch (Exception ex) {
             Log.e(LOG_TAG, ex.getMessage(), ex);

@@ -5,7 +5,6 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
     id 'de.mannodermaus.android-junit5' version '1.8.2.0' apply false
 }
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

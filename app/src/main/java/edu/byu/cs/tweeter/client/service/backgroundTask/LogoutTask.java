@@ -32,14 +32,13 @@ public class LogoutTask extends AuthenticatedTask {
             if (!response.isSuccess()) {
                 sendFailedMessage(response.getMessage());
             }
+            else{
+                sendSuccessMessage();
+            }
         }
         catch (Exception ex) {
             Log.e(LOG_TAG, ex.getMessage(), ex);
             sendExceptionMessage(ex);
         }
-        // Call sendSuccessMessage if successful
-        sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 }

@@ -1,9 +1,12 @@
 package edu.byu.cs.tweeter.server.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.byu.cs.tweeter.model.domain.Status;
+import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FeedRequest;
 import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
 import edu.byu.cs.tweeter.model.net.request.StoryRequest;
@@ -11,66 +14,162 @@ import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
 import edu.byu.cs.tweeter.util.FakeData;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
  * A DAO for accessing 'following' data from the database.
  */
 public class StatusDynamo implements StatusDAO{
+    private static final String StoryTableName = "Story";
+    private static final String FeedTableName = "Feed";
+
+    private static final String StoryAttr = "author_alias";
+    private static final String FeedAttr = "alias";
+    private static final String TimestampAttr = "timestamp";
+    // DynamoDB client
+    private static DynamoDbClient dynamoDbClient = DynamoDbClient.builder()
+            .region(Region.US_EAST_2)
+            .build();
+
+    private static DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.builder()
+            .dynamoDbClient(dynamoDbClient)
+            .build();
+    private static boolean isNonEmptyString(String value) {
+        return (value != null && value.length() > 0);
+    }
 
     @Override
     public FeedResponse getFeed(FeedRequest request) {
-        // TODO: Generates dummy data. Replace with a real implementation.
-        assert request.getLimit() > 0;
-        assert request.getTargetUser().getAlias() != null;
+        DynamoDbTable<Feed> table = enhancedClient.table(FeedTableName, TableSchema.fromBean(Feed.class));
+        Key key = Key.builder()
+                .partitionValue(request.getTargetUser().getAlias())
+                .build();
 
-        List<Status> allFeed = getDummyFeed();
-        List<Status> responseFeed = new ArrayList<>(request.getLimit());
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .limit(request.getLimit());
 
-        boolean hasMorePages = false;
-
-        if(request.getLimit() > 0) {
-            if (allFeed != null) {
-                int feedIndex = getFeedStartingIndex(request.getLastStatus(), allFeed);
-
-                for(int limitCounter = 0; feedIndex < allFeed.size() && limitCounter < request.getLimit(); feedIndex++, limitCounter++) {
-                    responseFeed.add(allFeed.get(feedIndex));
-                }
-
-                hasMorePages = feedIndex < allFeed.size();
-            }
+        if(request.getLastStatus() != null) {
+            // Build up the Exclusive Start Key (telling DynamoDB where you left off reading items)
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(FeedAttr, AttributeValue.builder().s(request.getTargetUser().getAlias()).build());
+            startKey.put(TimestampAttr, AttributeValue.builder().s(request.getLastStatus().getTimestamp().toString()).build());
+            requestBuilder.exclusiveStartKey(startKey);
         }
 
-        return new FeedResponse(responseFeed, hasMorePages);
+        QueryEnhancedRequest dbRequest = requestBuilder.build();
+
+        DataPage<Status> result = new DataPage<Status>();
+
+        PageIterable<Feed> pages = table.query(dbRequest);
+        pages.stream()
+                .limit(request.getLimit())
+                .forEach((Page<Feed> page) -> {
+                    result.setHasMorePages(page.lastEvaluatedKey() != null);
+                    page.items().forEach(response -> result.getValues().add(new Status(response.getPost(),
+                            new User( response.getFirstName(), response.getLastName(), response.getAuthor(),
+                                    response.getImage()), response.getTimestamp(), response.getUrls(), response.getMentions())));
+                });
+
+
+        return new FeedResponse(result.getValues(), result.isHasMorePages());
     }
     @Override
     public StoryResponse getStory(StoryRequest request) {
-        // TODO: Generates dummy data. Replace with a real implementation.
-        assert request.getLimit() > 0;
-        assert request.getTargetUser().getAlias() != null;
+        DynamoDbTable<Story> table = enhancedClient.table(StoryTableName, TableSchema.fromBean(Story.class));
+        Key key = Key.builder()
+                .partitionValue(request.getTargetUser().getAlias())
+                .build();
 
-        List<Status> allFeed = getDummyFeed();
-        List<Status> responseFeed = new ArrayList<>(request.getLimit());
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .limit(request.getLimit());
 
-        boolean hasMorePages = false;
+        if(request.getLastStatus() != null) {
+            // Build up the Exclusive Start Key (telling DynamoDB where you left off reading items)
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(StoryAttr, AttributeValue.builder().s(request.getTargetUser().getAlias()).build());
+            startKey.put(TimestampAttr, AttributeValue.builder().s(request.getLastStatus().getTimestamp().toString()).build());
+            requestBuilder.exclusiveStartKey(startKey);
+        }
 
-        if(request.getLimit() > 0) {
-            if (allFeed != null) {
-                int feedIndex = getFeedStartingIndex(request.getLastStatus(), allFeed);
+        QueryEnhancedRequest dbRequest = requestBuilder.build();
 
-                for(int limitCounter = 0; feedIndex < allFeed.size() && limitCounter < request.getLimit(); feedIndex++, limitCounter++) {
-                    responseFeed.add(allFeed.get(feedIndex));
-                }
+        DataPage<Status> result = new DataPage<Status>();
 
-                hasMorePages = feedIndex < allFeed.size();
+        PageIterable<Story> pages = table.query(dbRequest);
+        pages.stream()
+                .limit(request.getLimit())
+                .forEach((Page<Story> page) -> {
+                    result.setHasMorePages(page.lastEvaluatedKey() != null);
+                    page.items().forEach(response -> result.getValues().add(new Status(response.getPost(),
+                            new User( response.getFirstName(), response.getLastName(), response.getAuthor_alias(),
+                                    response.getImage()), response.getTimestamp(), response.getUrls(), response.getMentions())));
+                });
+
+
+        return new StoryResponse(result.getValues(), result.isHasMorePages());
+    }
+    @Override
+    public PostStatusResponse postStatus(PostStatusRequest request, List<String> followers) {
+        assert request.getStatus() != null;
+        DynamoDbTable<Story> table = enhancedClient.table(StoryTableName, TableSchema.fromBean(Story.class));
+        Key key = Key.builder()
+                .partitionValue(request.getStatus().getUser().getAlias()).sortValue(request.getStatus().getTimestamp())
+                .build();
+
+        Story story = table.getItem(key);
+        if(story != null){
+            return new PostStatusResponse(false);
+        }
+        else {
+            Story newStory = new Story();
+            //newStory.setStatus(request.getStatus());
+            newStory.setAuthor_alias(request.getStatus().getUser().getAlias());
+            newStory.setTimestamp(request.getStatus().getTimestamp());
+            newStory.setPost(request.getStatus().getPost());
+            newStory.setMentions(request.getStatus().getMentions());
+            newStory.setUrls(request.getStatus().getUrls());
+            newStory.setFirstName(request.getStatus().getUser().getFirstName());
+            newStory.setLastName(request.getStatus().getUser().getLastName());
+            newStory.setImage(request.getStatus().getUser().getImageUrl());
+            table.putItem(newStory);
+        }
+        DynamoDbTable<Feed> feedTable = enhancedClient.table(FeedTableName, TableSchema.fromBean(Feed.class));
+        for(int i=0; i< followers.size(); i++){
+            Key followerKey = Key.builder()
+                    .partitionValue(followers.get(i)).sortValue(request.getStatus().getTimestamp())
+                    .build();
+            Feed feed = feedTable.getItem(followerKey);
+            if(feed != null){
+                return new PostStatusResponse(false);
+            }
+            else{
+                Feed newFeed = new Feed();
+                newFeed.setAlias(followers.get(i));
+                newFeed.setAuthor(request.getStatus().getUser().getAlias());
+                newFeed.setTimestamp(request.getStatus().getTimestamp());
+                newFeed.setPost(request.getStatus().getPost());
+                newFeed.setMentions(request.getStatus().getMentions());
+                newFeed.setUrls(request.getStatus().getUrls());
+                newFeed.setFirstName(request.getStatus().getUser().getFirstName());
+                newFeed.setLastName(request.getStatus().getUser().getLastName());
+                newFeed.setImage(request.getStatus().getUser().getImageUrl());
+                feedTable.putItem(newFeed);
             }
         }
 
-        return new StoryResponse(responseFeed, hasMorePages);
-    }
-    @Override
-    public PostStatusResponse postStatus(PostStatusRequest request) {
-        assert request.getStatus() != null;
-        return new PostStatusResponse();
+        return new PostStatusResponse(true);
     }
 
 

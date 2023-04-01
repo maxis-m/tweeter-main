@@ -72,12 +72,12 @@ public class UserService{
         BackgroundTaskUtils.runTask(isFollowerTask);
     }
     public void unfollow(User selectedUser, UnFollowerObserver observer) {
-        UnfollowTask unfollowTask = new UnfollowTask(Cache.getInstance().getCurrUserAuthToken(),
+        UnfollowTask unfollowTask = new UnfollowTask(Cache.getInstance().getCurrUser(), Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new UnfollowHandler(observer));
         BackgroundTaskUtils.runTask(unfollowTask);
     }
     public void follow(User selectedUser, FollowerObserver observer) {
-        FollowTask followTask = new FollowTask(Cache.getInstance().getCurrUserAuthToken(),
+        FollowTask followTask = new FollowTask(Cache.getInstance().getCurrUser(), Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new FollowHandler(observer));
         BackgroundTaskUtils.runTask(followTask);
     }

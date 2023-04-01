@@ -28,7 +28,9 @@ public class LoginTask extends AuthenticateTask {
             if (!response.isSuccess()) {
                 sendFailedMessage(response.getMessage());
             }
-            return new Pair<>(response.getUser(), response.getAuthToken());
+            else {
+                return new Pair<>(response.getUser(), response.getAuthToken());
+            }
         }
         catch (Exception ex) {
             Log.e(LOG_TAG, ex.getMessage(), ex);

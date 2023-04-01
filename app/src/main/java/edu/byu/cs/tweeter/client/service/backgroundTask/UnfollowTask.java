@@ -21,10 +21,12 @@ public class UnfollowTask extends AuthenticatedTask {
      * The user that is being followed.
      */
     private final User followee;
+    private final User follower;
 
-    public UnfollowTask(AuthToken authToken, User followee, Handler messageHandler) {
+    public UnfollowTask(User follower, AuthToken authToken, User followee, Handler messageHandler) {
         super(authToken, messageHandler);
         this.followee = followee;
+        this.follower = follower;
     }
 
     @Override
@@ -32,20 +34,19 @@ public class UnfollowTask extends AuthenticatedTask {
         // We could do this from the presenter, without a task and handler, but we will
         // eventually remove the auth token from  the DB and will need this then.
         try {
-            UnfollowRequest request = new UnfollowRequest(followee);
+            UnfollowRequest request = new UnfollowRequest(followee, follower, authToken);
             UnfollowResponse response = getServerFacade().unfollow(request, UserService.URL_PATH_UNFOLLOW);
             if (!response.isSuccess()) {
                 sendFailedMessage(response.getMessage());
+            }
+            else{
+                sendSuccessMessage();
             }
         }
         catch (Exception ex) {
             Log.e(LOG_TAG, ex.getMessage(), ex);
             sendExceptionMessage(ex);
         }
-        // Call sendSuccessMessage if successful
-        sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
     }
 
 
