@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.dao;
+package edu.byu.cs.tweeter.server.dao.dynamo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +30,24 @@ public class DataPage<T> {
 
     public boolean isHasMorePages() {
         return hasMorePages;
+    }
+    public void revlist(List<T> values)
+    {
+        // base condition when the list size is 0
+        if (values.size() <= 1 || values == null)
+            return;
+
+
+        T value = values.remove(0);
+
+        // call the recursive function to reverse
+        // the list after removing the first element
+        revlist(values);
+
+        // now after the rest of the list has been
+        // reversed by the upper recursive call,
+        // add the first value at the end
+        values.add(value);
     }
 }
 

@@ -13,8 +13,8 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
-import edu.byu.cs.tweeter.server.dao.FollowDynamo;
-import edu.byu.cs.tweeter.server.dao.StatusDynamo;
+import edu.byu.cs.tweeter.server.dao.dynamo.FollowDynamo;
+import edu.byu.cs.tweeter.server.dao.dynamo.StatusDynamo;
 
 public class StoryTest {
 
@@ -40,7 +40,7 @@ public class StoryTest {
         Mockito.when(mockStatusDAO.getStory(request)).thenReturn(expectedResponse);
 
         statusServiceSpy = Mockito.spy(StatusService.class);
-        Mockito.when(statusServiceSpy.getStatusDAO()).thenReturn(mockStatusDAO);
+        Mockito.when(statusServiceSpy.statusDAO).thenReturn(mockStatusDAO);
     }
 
     /**

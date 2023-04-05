@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.dao;
+package edu.byu.cs.tweeter.server.dao.dynamo.beans;
 
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;

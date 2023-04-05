@@ -7,12 +7,15 @@ import edu.byu.cs.tweeter.model.net.request.FollowRequest;
 import edu.byu.cs.tweeter.model.net.request.UnfollowRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.server.dao.DAOBuilder;
+import edu.byu.cs.tweeter.server.dao.Dynamo;
 import edu.byu.cs.tweeter.server.service.FollowService;
 
 public class UnfollowHandler implements RequestHandler<UnfollowRequest, UnfollowResponse> {
     @Override
     public UnfollowResponse handleRequest(UnfollowRequest unfollowRequest, Context context) {
-        FollowService followService = new FollowService();
+        DAOBuilder daoBuilder = new DAOBuilder(new Dynamo());
+        FollowService followService = new FollowService(daoBuilder.getUserDAO(), daoBuilder.getFollowDAO());
         return followService.unfollow(unfollowRequest);
     }
 }

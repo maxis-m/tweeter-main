@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.dao;
+package edu.byu.cs.tweeter.server.dao.dynamo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +15,8 @@ import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.server.dao.FollowDAO;
+import edu.byu.cs.tweeter.server.dao.dynamo.beans.Follows;
 import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
@@ -32,7 +34,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 /**
  * A DAO for accessing 'following' data from the database.
  */
-public class FollowDynamo implements FollowDAO{
+public class FollowDynamo implements FollowDAO {
     private static final String FollowsTableName = "follows";
     public static final String FollowsIndexName = "follows_index";
 

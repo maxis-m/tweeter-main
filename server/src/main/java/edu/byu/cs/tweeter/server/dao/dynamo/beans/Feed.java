@@ -1,17 +1,17 @@
-package edu.byu.cs.tweeter.server.dao;
+package edu.byu.cs.tweeter.server.dao.dynamo.beans;
 
 import java.util.List;
 
-import edu.byu.cs.tweeter.model.domain.Status;
-import edu.byu.cs.tweeter.model.domain.User;
+
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
-public class Story {
-    private String author_alias;
+public class Feed {
+    private String alias;
     public Long timestamp;
+    public String author;
 
 
     public String post;
@@ -21,6 +21,14 @@ public class Story {
     public String image;
     public List<String> urls;
     public List<String> mentions;
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
     public String getPost() {
         return post;
@@ -72,12 +80,12 @@ public class Story {
     }
 
     @DynamoDbPartitionKey
-    public String getAuthor_alias() {
-        return author_alias;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setAuthor_alias(String author_alias) {
-        this.author_alias = author_alias;
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     @DynamoDbSortKey

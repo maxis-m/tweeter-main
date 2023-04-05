@@ -7,13 +7,16 @@ import edu.byu.cs.tweeter.model.net.request.FollowRequest;
 import edu.byu.cs.tweeter.model.net.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
+import edu.byu.cs.tweeter.server.dao.DAOBuilder;
+import edu.byu.cs.tweeter.server.dao.Dynamo;
 import edu.byu.cs.tweeter.server.service.FollowService;
 import edu.byu.cs.tweeter.server.service.UserService;
 
 public class FollowHandler implements RequestHandler<FollowRequest, FollowResponse> {
     @Override
     public FollowResponse handleRequest(FollowRequest followRequest, Context context) {
-        FollowService followService = new FollowService();
+        DAOBuilder daoBuilder = new DAOBuilder(new Dynamo());
+        FollowService followService = new FollowService(daoBuilder.getUserDAO(), daoBuilder.getFollowDAO());
         return followService.follow(followRequest);
     }
 }

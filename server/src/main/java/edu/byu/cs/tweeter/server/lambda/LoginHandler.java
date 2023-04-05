@@ -7,6 +7,8 @@ import java.security.NoSuchAlgorithmException;
 
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
+import edu.byu.cs.tweeter.server.dao.DAOBuilder;
+import edu.byu.cs.tweeter.server.dao.Dynamo;
 import edu.byu.cs.tweeter.server.service.UserService;
 
 /**
@@ -16,7 +18,8 @@ import edu.byu.cs.tweeter.server.service.UserService;
 public class LoginHandler implements RequestHandler<LoginRequest, LoginResponse> {
     @Override
     public LoginResponse handleRequest(LoginRequest loginRequest, Context context) {
-        UserService userService = new UserService();
+        DAOBuilder daoBuilder = new DAOBuilder(new Dynamo());
+        UserService userService = new UserService(daoBuilder.getUserDAO());
         try {
             return userService.login(loginRequest);
         } catch (NoSuchAlgorithmException e) {

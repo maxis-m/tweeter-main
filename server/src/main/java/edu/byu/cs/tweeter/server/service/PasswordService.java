@@ -6,22 +6,19 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 public class PasswordService {
-    private String password;
 
-    public PasswordService(String password) {
-        this.password = password;
-    }
     public PasswordService(){}
-    public String getHashedPassword() throws NoSuchAlgorithmException {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
+    public String getHashedPassword(String password, String username) throws NoSuchAlgorithmException {
+        //SecureRandom random = new SecureRandom();
+        //byte[] salt = new byte[16];
+        //random.nextBytes(salt);
         MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.update(salt);
+        md.update(username.getBytes());
         byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
-        return hashedPassword.toString();
-    }
-    public void setPassword(String password){
-        this.password = password;
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashedPassword) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

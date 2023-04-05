@@ -1,6 +1,5 @@
-package edu.byu.cs.tweeter.server.dao;
+package edu.byu.cs.tweeter.server.dao.dynamo;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,9 @@ import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
+import edu.byu.cs.tweeter.server.dao.StatusDAO;
+import edu.byu.cs.tweeter.server.dao.dynamo.beans.Feed;
+import edu.byu.cs.tweeter.server.dao.dynamo.beans.Story;
 import edu.byu.cs.tweeter.util.FakeData;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -29,7 +31,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 /**
  * A DAO for accessing 'following' data from the database.
  */
-public class StatusDynamo implements StatusDAO{
+public class StatusDynamo implements StatusDAO {
     private static final String StoryTableName = "Story";
     private static final String FeedTableName = "Feed";
 
@@ -81,7 +83,7 @@ public class StatusDynamo implements StatusDAO{
                                     response.getImage()), response.getTimestamp(), response.getUrls(), response.getMentions())));
                 });
 
-
+        result.revlist(result.getValues());
         return new FeedResponse(result.getValues(), result.isHasMorePages());
     }
     @Override
@@ -117,7 +119,7 @@ public class StatusDynamo implements StatusDAO{
                                     response.getImage()), response.getTimestamp(), response.getUrls(), response.getMentions())));
                 });
 
-
+        result.revlist(result.getValues());
         return new StoryResponse(result.getValues(), result.isHasMorePages());
     }
     @Override
@@ -130,7 +132,7 @@ public class StatusDynamo implements StatusDAO{
 
         Story story = table.getItem(key);
         if(story != null){
-            return new PostStatusResponse(false);
+            return new PostStatusResponse(false, "status already exists");
         }
         else {
             Story newStory = new Story();
@@ -152,7 +154,7 @@ public class StatusDynamo implements StatusDAO{
                     .build();
             Feed feed = feedTable.getItem(followerKey);
             if(feed != null){
-                return new PostStatusResponse(false);
+                return new PostStatusResponse(false, "status already exists");
             }
             else{
                 Feed newFeed = new Feed();
@@ -169,7 +171,7 @@ public class StatusDynamo implements StatusDAO{
             }
         }
 
-        return new PostStatusResponse(true);
+        return new PostStatusResponse();
     }
 
 
