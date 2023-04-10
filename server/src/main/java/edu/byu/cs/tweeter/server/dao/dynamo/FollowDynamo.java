@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.server.dao.dynamo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +24,17 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteResult;
 import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 
 /**
  * A DAO for accessing 'following' data from the database.
@@ -82,6 +87,8 @@ public class FollowDynamo implements FollowDAO {
         table.deleteItem(key);
         return new UnfollowResponse("Success");
     }
+
+
 
     /**
      * Gets the count of users from the database that the user specified is following. The
@@ -208,67 +215,5 @@ public class FollowDynamo implements FollowDAO {
         Follows follows = table.getItem(key);
         return new IsFollowerResponse(follows != null);
     }
-    /**
-     * Determines the index for the first followee in the specified 'allFollowees' list that should
-     * be returned in the current request. This will be the index of the next followee after the
-     * specified 'lastFollowee'.
-     *
-     * @param lastFolloweeAlias the alias of the last followee that was returned in the previous
-     *                          request or null if there was no previous request.
-     * @param allFollowees the generated list of followees from which we are returning paged results.
-     * @return the index of the first followee to be returned.
-     */
-    private int getFolloweesStartingIndex(String lastFolloweeAlias, List<User> allFollowees) {
-
-        int followeesIndex = 0;
-
-        if(lastFolloweeAlias != null) {
-            // This is a paged request for something after the first page. Find the first item
-            // we should return
-            for (int i = 0; i < allFollowees.size(); i++) {
-                if(lastFolloweeAlias.equals(allFollowees.get(i).getAlias())) {
-                    // We found the index of the last item returned last time. Increment to get
-                    // to the first one we should return
-                    followeesIndex = i + 1;
-                    break;
-                }
-            }
-        }
-
-        return followeesIndex;
-    }
-
-    /**
-     * Determines the index for the first follower in the specified 'allFollowers' list that should
-     * be returned in the current request. This will be the index of the next follower after the
-     * specified 'lastFollower'.
-     *
-     * @param lastFollowerAlias the alias of the last follower that was returned in the previous
-     *                          request or null if there was no previous request.
-     * @param allFollowers the generated list of followers from which we are returning paged results.
-     * @return the index of the first follower to be returned.
-     */
-    private int getFollowersStartingIndex(String lastFollowerAlias, List<User> allFollowers) {
-
-        int followersIndex = 0;
-
-        if (lastFollowerAlias != null) {
-            // This is a paged request for something after the first page. Find the first item
-            // we should return
-            for (int i = 0; i < allFollowers.size(); i++) {
-                if (lastFollowerAlias.equals(allFollowers.get(i).getAlias())) {
-                    // We found the index of the last item returned last time. Increment to get
-                    // to the first one we should return
-                    followersIndex = i + 1;
-                    break;
-                }
-            }
-        }
-
-        return followersIndex;
-    }
-
-
-
 
 }

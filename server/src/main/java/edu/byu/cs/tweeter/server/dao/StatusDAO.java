@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.net.request.FeedRequest;
+import edu.byu.cs.tweeter.model.net.request.PostStatusFeedRequest;
 import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
 import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
@@ -22,5 +23,8 @@ public interface StatusDAO {
     public StoryResponse getStory(StoryRequest request);
 
 
-    PostStatusResponse postStatus(PostStatusRequest request, List<String> followers);
+    PostStatusResponse postStatus(PostStatusRequest request);
+    //void postFeedStatus(String alias, Status status);
+
+    void addFeedBatch(List<String> followers, Status status);
 }

@@ -1,7 +1,11 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.List;
+
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.net.request.FeedRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
+import edu.byu.cs.tweeter.model.net.request.PostStatusFeedRequest;
 import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
 import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
@@ -57,10 +61,29 @@ public class StatusService {
         if(request.getStatus() == null){
             throw new RuntimeException("[Bad Request] Request needs to have a status");
         }
-        FollowersRequest followersRequest = new FollowersRequest(request.getAuthToken(), request.getStatus().getUser().getAlias(), 0, null);
-        FollowersResponse followersResponse = followDAO.getAllFollowers(followersRequest);
+        //FollowersRequest followersRequest = new FollowersRequest(request.getAuthToken(), request.getStatus().getUser().getAlias(), 0, null);
+        //FollowersResponse followersResponse = followDAO.getAllFollowers(followersRequest);
 
-        return statusDAO.postStatus(request, followersResponse.getFollowersAlias());
+        return statusDAO.postStatus(request);
+    }
+    /**
+    public void postStatusFeed(String alias, Status status){
+        if(status == null){
+            throw new RuntimeException("[Bad Request] Request needs to have a status");
+        }
+        else if(alias == null){
+            throw new RuntimeException("[Bad Request] Request needs to have a target user");
+        }
+        statusDAO.postFeedStatus(alias, status);
+    }**/
+    public void addFeedBatch(List<String> followers, Status status){
+        if(status == null){
+            throw new RuntimeException("[Bad Request] Request needs to have a status");
+        }
+        else if(followers == null){
+            throw new RuntimeException("[Bad Request] Request needs to have a target user");
+        }
+        statusDAO.addFeedBatch(followers, status);
     }
 
     AuthTokenChecker getChecker(){

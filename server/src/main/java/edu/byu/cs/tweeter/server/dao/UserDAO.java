@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.server.dao;
 
+import java.util.List;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.GetFollowersCountRequest;
@@ -14,6 +16,7 @@ import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
+import edu.byu.cs.tweeter.server.dao.dynamo.beans.Users;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public interface UserDAO{
@@ -29,7 +32,4 @@ public interface UserDAO{
     public GetFollowersCountResponse getFollowersCount(GetFollowersCountRequest request);
     public GetFollowingCountResponse getFollowingCount(GetFollowingCountRequest request);
     public void deleteToken(String token);
-
-
-
 }

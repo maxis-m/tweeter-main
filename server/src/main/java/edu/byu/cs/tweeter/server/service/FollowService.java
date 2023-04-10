@@ -20,11 +20,9 @@ import edu.byu.cs.tweeter.model.net.response.GetFollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.GetFollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
-import edu.byu.cs.tweeter.server.dao.DAOBuilder;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.dynamo.FollowDynamo;
 import edu.byu.cs.tweeter.server.dao.UserDAO;
-import edu.byu.cs.tweeter.server.dao.dynamo.UserDynamo;
 
 /**
  * Contains the business logic for getting the users a user is following.
@@ -63,6 +61,15 @@ public class FollowService {
             followees.add(userDAO.getUser(new GetUserRequest(response.getFolloweesAlias().get(i), new AuthToken())));
         }
         return new FollowingResponse(followees, response.getHasMorePages());
+    }
+    public List<String> getFollowersForStatus(String alias, int limit, String lastFollowerAlias){
+        if(alias == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
+        } else if(limit <= 0) {
+            throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
+        }
+        FollowersRequest request = new FollowersRequest(null, alias, limit, lastFollowerAlias);
+        return followDAO.getFollowers(request).getFollowersAlias();
     }
     public FollowersResponse getFollowers(FollowersRequest request) {
         if(!getChecker().isValid(request.getAuthToken())){
