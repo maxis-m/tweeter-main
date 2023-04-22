@@ -48,6 +48,9 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
         }
         return userService;
     }
+    protected UserService.PostStatusObserver getPostStatusObserver(){
+        return new PostStatusObserver();
+    }
     public void isFollower(User selectedUser) {
         getUserService().isFollowerTask(selectedUser, new IsFollowerObserver());
     }
@@ -65,7 +68,7 @@ public class MainPresenter extends Presenter<MainPresenter.MainView>{
 
     public void postStatus(Status newStatus) {
         view.displayInfoMessage("Posting Status...");
-        getUserService().postStatus(newStatus, new PostStatusObserver());
+        getUserService().postStatus(newStatus, getPostStatusObserver());
     }
 
 
